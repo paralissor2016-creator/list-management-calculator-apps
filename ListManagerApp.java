@@ -6,7 +6,7 @@ import java.util.Vector;
 public class ListManagerApp extends Frame {
     private final Vector<String> sourceData = new Vector<>();
     private final Vector<String> secondListData = new Vector<>();
-    private final Vector<String> originalData = new Vector<>(); // Оригинальные данные
+    private final Vector<String> originalData = new Vector<>();
 
     private final List sourceList = new List(10, false);
     private final List secondList = new List(10, false);
@@ -23,14 +23,12 @@ public class ListManagerApp extends Frame {
         setSize(600, 400);
         setLocationRelativeTo(null);
 
-        // Начальные данные
         originalData.addAll(Arrays.asList(
                 "Элемент 1", "Элемент 2", "Элемент 3", "Элемент 4",
                 "Элемент 5", "Элемент 6", "Элемент 7", "Элемент 8",
                 "Элемент 9", "Элемент 10"
         ));
-        
-        sourceData.addAll(originalData); // Копируем в рабочий список
+        sourceData.addAll(originalData);
 
         Panel topPanel = new Panel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         topPanel.add(oddDeleteCheck);
@@ -70,7 +68,6 @@ public class ListManagerApp extends Frame {
             }
         });
 
-        // Восстановление оригинальных данных
         refreshButton.addActionListener(e -> {
             sourceData.clear();
             sourceData.addAll(originalData);
@@ -104,21 +101,42 @@ public class ListManagerApp extends Frame {
         }
     }
 
+    /**
+     * Удаляет все нечётные строки (1-я, 3-я, 5-я, ...)
+     */
     private void deleteOddItems() {
-        for (int i = sourceData.size() - 1; i >= 0; i--) {
+        Vector<String> toRemove = new Vector<>();
+        
+        // Собираем все нечётные элементы
+        for (int i = 0; i < sourceData.size(); i++) {
             if ((i + 1) % 2 != 0) { // нечётные строки (1, 3, 5, 7...)
-                sourceData.remove(i);
+                toRemove.add(sourceData.get(i));
             }
         }
+        
+        // Удаляем все сразу
+        sourceData.removeAll(toRemove);
         refreshLists();
     }
 
+    /**
+     * Переносит все чётные строки (2-я, 4-я, 6-я, ...) во второй список
+     */
     private void moveEvenItemsToSecondList() {
-        for (int i = sourceData.size() - 1; i >= 0; i--) {
+        Vector<String> toMove = new Vector<>();
+        
+        // Собираем все чётные элементы в правильном порядке
+        for (int i = 0; i < sourceData.size(); i++) {
             if ((i + 1) % 2 == 0) { // чётные строки (2, 4, 6, 8...)
-                secondListData.add(sourceData.remove(i));
+                toMove.add(sourceData.get(i));
             }
         }
+        
+        // ��обавляем во второй список
+        secondListData.addAll(toMove);
+        
+        // Удаляем из основного списка
+        sourceData.removeAll(toMove);
         refreshLists();
     }
 
