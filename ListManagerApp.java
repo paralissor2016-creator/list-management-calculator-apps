@@ -6,6 +6,7 @@ import java.util.Vector;
 public class ListManagerApp extends Frame {
     private final Vector<String> sourceData = new Vector<>();
     private final Vector<String> secondListData = new Vector<>();
+    private final Vector<String> originalData = new Vector<>(); // Оригинальные данные
 
     private final List sourceList = new List(10, false);
     private final List secondList = new List(10, false);
@@ -23,11 +24,13 @@ public class ListManagerApp extends Frame {
         setLocationRelativeTo(null);
 
         // Начальные данные
-        sourceData.addAll(Arrays.asList(
+        originalData.addAll(Arrays.asList(
                 "Элемент 1", "Элемент 2", "Элемент 3", "Элемент 4",
                 "Элемент 5", "Элемент 6", "Элемент 7", "Элемент 8",
                 "Элемент 9", "Элемент 10"
         ));
+        
+        sourceData.addAll(originalData); // Копируем в рабочий список
 
         Panel topPanel = new Panel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         topPanel.add(oddDeleteCheck);
@@ -56,18 +59,24 @@ public class ListManagerApp extends Frame {
         oddDeleteCheck.addItemListener(e -> {
             if (oddDeleteCheck.getState()) {
                 deleteOddItems();
-                oddDeleteCheck.setState(false); // Сбросить флажок
+                oddDeleteCheck.setState(false);
             }
         });
 
         evenMoveCheck.addItemListener(e -> {
             if (evenMoveCheck.getState()) {
                 moveEvenItemsToSecondList();
-                evenMoveCheck.setState(false); // Сбросить флажок
+                evenMoveCheck.setState(false);
             }
         });
 
-        refreshButton.addActionListener(e -> refreshLists());
+        // Восстановление оригинальных данных
+        refreshButton.addActionListener(e -> {
+            sourceData.clear();
+            sourceData.addAll(originalData);
+            secondListData.clear();
+            refreshLists();
+        });
 
         clearSecondButton.addActionListener(e -> {
             secondListData.clear();
@@ -95,10 +104,6 @@ public class ListManagerApp extends Frame {
         }
     }
 
-    /**
-     * Удаляет все нечётные строки (1-я, 3-я, 5-я, ...)
-     * ✓ ИСПРАВЛЕНО: удаление в обратном порядке (от конца к началу)
-     */
     private void deleteOddItems() {
         for (int i = sourceData.size() - 1; i >= 0; i--) {
             if ((i + 1) % 2 != 0) { // нечётные строки (1, 3, 5, 7...)
@@ -108,10 +113,6 @@ public class ListManagerApp extends Frame {
         refreshLists();
     }
 
-    /**
-     * Переносит все чётные строки (2-я, 4-я, 6-я, ...) во второй список
-     * ✓ ИСПРАВЛЕНО: перемещение в обратном порядке (от конца к началу)
-     */
     private void moveEvenItemsToSecondList() {
         for (int i = sourceData.size() - 1; i >= 0; i--) {
             if ((i + 1) % 2 == 0) { // чётные строки (2, 4, 6, 8...)
