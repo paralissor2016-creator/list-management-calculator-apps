@@ -103,19 +103,20 @@ public class ListManagerApp extends Frame {
 
     /**
      * Удаляет все нечётные строки (1-я, 3-я, 5-я, ...)
+     * Используем новый вектор для хранения только чётных элементов
      */
     private void deleteOddItems() {
-        Vector<String> toRemove = new Vector<>();
-        
-        // Собираем все нечётные элементы
+        Vector<String> newData = new Vector<>();
+
+        // Копируем только чётные элементы (по позиции)
         for (int i = 0; i < sourceData.size(); i++) {
-            if ((i + 1) % 2 != 0) { // нечётные строки (1, 3, 5, 7...)
-                toRemove.add(sourceData.get(i));
+            if ((i + 1) % 2 == 0) { // чётные позиции: 2, 4, 6, 8...
+                newData.add(sourceData.get(i));
             }
         }
-        
-        // Удаляем все сразу
-        sourceData.removeAll(toRemove);
+
+        sourceData.clear();
+        sourceData.addAll(newData);
         refreshLists();
     }
 
@@ -123,20 +124,22 @@ public class ListManagerApp extends Frame {
      * Переносит все чётные строки (2-я, 4-я, 6-я, ...) во второй список
      */
     private void moveEvenItemsToSecondList() {
+        Vector<String> newData = new Vector<>();
         Vector<String> toMove = new Vector<>();
-        
-        // Собираем все чётные элементы в правильном порядке
+
+        // Разделяем на нечётные (остаются) и чётные (переносятся)
         for (int i = 0; i < sourceData.size(); i++) {
-            if ((i + 1) % 2 == 0) { // чётные строки (2, 4, 6, 8...)
+            if ((i + 1) % 2 == 0) { // чётные позиции: 2, 4, 6, 8...
                 toMove.add(sourceData.get(i));
+            } else { // нечётные позиции: 1, 3, 5, 7...
+                newData.add(sourceData.get(i));
             }
         }
-        
-        // ��обавляем во второй список
+
+        // Обновляем оба списка
+        sourceData.clear();
+        sourceData.addAll(newData);
         secondListData.addAll(toMove);
-        
-        // Удаляем из основного списка
-        sourceData.removeAll(toMove);
         refreshLists();
     }
 
